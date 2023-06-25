@@ -39,18 +39,18 @@ foreach ($requestGuid in $entriesByRequestGuid.Keys) {
 
     $handleEntry = $entriesByRequestGuid[$requestGuid]['HANDLE']
     $respondEntry = $entriesByRequestGuid[$requestGuid]['RESPOND']
-    # Finding the frontend server ID
+    # Finding the frontend server ID with regex "\d" means digit
     $frontEndServer = $postEntry['ServerId'] -replace 'frontend(\d+)', 'frontend$1'
     # Finding the worker server ID and pulling the response time difference
     if ($handleEntry) {
         $workerServer = $handleEntry['ServerId'] -replace 'worker(\d+)', 'worker$1'
         $responseTimeDifference = [datetime]::Parse($handleEntry['DateStamp']) - [datetime]::Parse($postEntry['DateStamp'])
         $responseTimeDifference = $responseTimeDifference.TotalMilliseconds
-        # Comparing the response time difference and seeing if it matches 500ms or more (this is the line that is configurable)
+        # Comparing the response time difference and seeing if it matches 500ms or more (this is a configurable line)
         if ($responseTimeDifference -ge 500) {
             $servers[$frontEndServer] += 1
             $servers[$workerServer] += 1
-
+            # adding if it is frontend server or worker server
             if (-not $serverResponseTimes.ContainsKey($frontEndServer)) {
                 $serverResponseTimes[$frontEndServer] = @()
             }
@@ -59,7 +59,7 @@ foreach ($requestGuid in $entriesByRequestGuid.Keys) {
             }
             $serverResponseTimes[$frontEndServer] += $responseTimeDifference
             $serverResponseTimes[$workerServer] += $responseTimeDifference
-            # This is the HANDLE output for the output file that is created
+            # This is the POST to HANDLE output for the output file that is created
             $output = @"
 Request GUID: $requestGuid
 Action: POST to HANDLE
@@ -76,15 +76,15 @@ Response Time Difference: $responseTimeDifference ms
     if ($respondEntry) {
         $responseTimeDifference = [datetime]::Parse($respondEntry['DateStamp']) - [datetime]::Parse($handleEntry['DateStamp'])
         $responseTimeDifference = $responseTimeDifference.TotalMilliseconds
-        # Comparing the response time difference and seeing if it matches 500ms or more (this is the line that is configurable)
+        # Comparing the response time difference and seeing if it matches 500ms or more (this is a configurable line)
         if ($responseTimeDifference -ge 500) {
             $servers[$frontEndServer] += 1
-
+            # adding if it is frontend server or worker server
             if (-not $serverResponseTimes.ContainsKey($frontEndServer)) {
                 $serverResponseTimes[$frontEndServer] = @()
             }
             $serverResponseTimes[$frontEndServer] += $responseTimeDifference
-            # This is the POST output for the output file that is created
+            # This is the HANDLE to RESPOND output for the output file that is created
             $output = @"
 Request GUID: $requestGuid
 Action: HANDLE to RESPOND
@@ -98,7 +98,7 @@ Response Time Difference: $responseTimeDifference ms
         }
     }
 }
-
+# Calculating average response time for console and output file just for extra info
 $serverStats = "Server Statistics:`n"
 foreach ($server in $servers.Keys | Sort-Object -Property @{Expression={[int]$servers[$_]} ; Descending=$true}) {
     $entryCount = $servers[$server]
@@ -108,11 +108,13 @@ foreach ($server in $servers.Keys | Sort-Object -Property @{Expression={[int]$se
     $serverStats += "Server: $server | Entry Count: $entryCount | Average Response Time: $averageResponseTime ms`n"
 }
 
-#$serverStatsPath = "path/to/log/output/file"
+# Asking where to save output file and generating it
+# $serverStatsPath = "path/to/log/output/file"
 $serverStatsPath = $(Read-host -Prompt "Please enter the path to where the output file should be saved (including file name and extension)")
 $outputs += $serverStats
 $outputs | Out-File -FilePath $serverStatsPath
 
+# Displaying info in console window to show a brief overview
 $warningMessage = "Output file has been saved in", $serverStatsPath, "`nThe following servers have a response time of over 500ms. They should be investigated:`n`n"
 $warningMessage += $serverStats
 
