@@ -20,20 +20,21 @@ datestamp, request GUID, action type, requested url, -, status, -, server/worker
 
 The .ps1 will prompt for the path of the log file and then will prompt for a location to save the log file:
 
-![File Path prompts](https://github.com/frasersmith5/WebResponseCheck/assets/2691536/7bba9386-263e-419a-a4f6-15575f461d56)
+![File Path prompts](images/file_path_prompt.png)
 
 This will take some time depending on the size of the log file so be patient :)
 
 Once the script has ran, the console will display an output to show any server that has a response time of over 500ms and will order them by their average highest response time:
 
-![Script Completed](https://github.com/frasersmith5/WebResponseCheck/assets/2691536/eddfe33f-951d-4545-aa4b-e7af3340d5f4)
+![Script Completed](images/script_completed.png)
 
 The response time can be configured by editing the .ps1 file on line 50 for POST to HANDLE actions and line 80 for HANDLE to RESPOND actions:
 
-![Response Time Edit line](https://github.com/frasersmith5/WebResponseCheck/assets/2691536/09e1e222-f50f-4ffb-9c8c-d9ffbbca5e9a)
+![Response Time Edit line_50](images/response_time_edit_1.png)
+![Response Time Edit line_80](images/response_time_edit_2.png)
 
 The log output file that is generated contains the same statistics as the console but also includes all of the entries that matches the criteria from the log. For example:
 
-![sameple-output.log](https://github.com/frasersmith5/WebResponseCheck/assets/2691536/9508e015-a23f-4cc2-9fa3-faffd2b05bf5)
+![sameple-output.log](images/sample_output.png)
 
 This script should run on any Windows system. I have attached 2x sample logs - a full size log with 600,000 log entries and a significantly shortened version with only 1000 lines (much quicker for testing). I have also attached a sample output file to show what you can expect - sample_output.log
