@@ -1,8 +1,8 @@
 # WebResponseCheck
 
-Example of a powershell script that can read and output from a log file.
+Example of a PowerShell script that can read and output from a log file.
 
-Straight forward powershell script that can be used to read a log file with an example log style.
+Straight forward PowerShell script that can be used to read a log file with an example log style.
 
 To run (using PowerShell):
 ```
